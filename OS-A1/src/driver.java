@@ -5,17 +5,12 @@ public class driver {
 	
 	static Job[] testingJobs;
 	
-	static int last_processor_count = 0; //initially 0, first job goes on processor 0
+	static int last_processor_count = 0; //initially 0, first job goes on processor 0 for circular method.
 	
 	static int total_processors = 3; //3016%3 + 2 = 3 (per assignment instructions)
 	
-	static int time_ms; //overall timer for keeping track of run time???
-	
 	static Processor[] processorList = new Processor[total_processors]; //array of processors 
-	
-	static int [] allTurnaroundTimes = new int[100]; //array for storing the turnaround times of
-	
-	
+
 	
 	
 	public static void main(String[] args)
@@ -27,7 +22,6 @@ public class driver {
 		{
 			processorList[i] = new Processor();
 		}
-		
 		
 		
 		
@@ -50,34 +44,66 @@ public class driver {
 		Job[] currentJobList;
 		
 		//array of turn-around times for each sequence of 100
-		int[] turnaroundTimesCircular = new int[100];
+		int[] turnAroundTimesCircular = new int[100];
+		int[] turnAroundTimesOther = new int[100];
 		
 		
-		for(int i = 0; i< 100; i++)	//run 100 sequences and record turnaound times
+		for(int i = 0; i< 100; i++)	//run 100 sequences and record turn around times
 		{
 			currentJobList = generateRandomJobs();
-			//TODO calculate turnaound time: for 1 sequence is the max processor job queue (because they are running in parallel).
+	
+			runJobsCircular(currentJobList);
+			turnAroundTimesCircular[i] = determineTurnAroundTime();
+			
+			runJobsOther(currentJobList);
+			turnAroundTimesOther[i] = determineTurnAroundTime();
+			
 		}
 		
 		
-		//TODO calculate min, max, average and STD for each set of turnaround times.
+		
+		System.out.println("****Randomly generated job sequences of 100****");
+		System.out.println("***********************************************");
+		//Display min, max, average and STD for each set of 100 turn around times.
+		System.out.println("Statistics for CIRCULAR method:");
+		System.out.println("Max:" + getMax(turnAroundTimesCircular)+"ms");
+		System.out.println("Min:" + getMin(turnAroundTimesCircular)+"ms");
+		System.out.println("Average:" + getAverage(turnAroundTimesCircular)+"ms");
+		System.out.println("Standard Deviation:" + getSTD(turnAroundTimesCircular)+"ms");
 
+		System.out.println("---------------------------------------------");
 		
+		System.out.println("Statistics for OTHER method:");
+		System.out.println("Max:" + getMax(turnAroundTimesOther)+"ms");
+		System.out.println("Min:" + getMin(turnAroundTimesOther)+"ms");
+		System.out.println("Average:" + getAverage(turnAroundTimesOther)+"ms");
+		System.out.println("Standard Deviation:" + getSTD(turnAroundTimesOther)+"ms");
 		
+		System.out.println("***********************************************");
 		
+		//_______________________________________________________________________________________
+		System.out.println("Test Job Sequences (from assignment instructions)");
+		currentJobList = testingJobs;
+		
+		runJobsCircular(currentJobList);
+		System.out.println("Turn around time CIRCULAR: " + determineTurnAroundTime() + "ms");
+		runJobsOther(currentJobList);
+		System.out.println("Turn around time OTHER: " + determineTurnAroundTime() + "ms");
 	}
 	
-	
-	
-	
 	/*
-	 * TURNAROUND TIME IS CALCULATED WRONG EVERWHERE. YOU DON'T NEED A TOTAL TIME. JUST THE INDIVIDUAL TIMES FOR EACH PROCESSOR. THE MAX VALUE OF THOSE
-	 * IS THE TURNAROUND TIME FOR THE WHOLE PROGRAM.
-	 * TURNAROUNDTIMESCIRCULAR SHOULD BE AN ARRAY OF THE TURNADOUND TIMES FOR EACH SEQUENCE OF 100 JOBS (I.E 1 PROGRAM)
+	 * method determines the longest jobQueueTime for all 3 processors. i.e the total processing time for the program (job sequence)
 	 */
-	
-	
-	
+	public static int determineTurnAroundTime()
+	{
+		int t;
+		int p1t = processorList[0].jobQueueTime;
+		int p2t = processorList[1].jobQueueTime;
+		int p3t = processorList[2].jobQueueTime;
+		t= Math.max(p1t, p2t);
+		t= Math.max(p2t, p3t);
+		return t;
+	}
 	
 	
 	/*
@@ -97,47 +123,43 @@ public class driver {
 		
 		p.addJob(j);
 		//NOTE: it takes 1ms to put a job onto any processor
-		time_ms = time_ms+1;//TODO WRONG need to add the 1ms time to the processer time 
+		p.jobQueueTime += 1;
 		
 	}
 	
-	
+	//TODO finish determineProcessorOther method and document fully. Consider combining the two runJobs methods into one to shorten code (just need an if statement & another input variable to say which determineProcessor method to pick)
 	/*
 	 * method to determine processor based on **************?
 	 */
-	public void determineProcessorOther(Job j)
+	public static void determineProcessorOther(Job j)
 	{
+		//Processor p;
+		//logic statement
+		
+		
 		//NOTE: it takes 1ms to put a job onto any processor
-		time_ms = time_ms+1;//TODO WRONG need to add the 1ms time to the processer time 
+		//p.jobQueueTime += 1;
 	}
 	
 	
 	//method to run an array of jobs in a circular fashion, returns turnaround time
-	public static int runJobsCircular(Job[] jobs)
+	public static void runJobsCircular(Job[] jobs)
 	{
 		//reset processors first
-		for(int i = 0; i > total_processors; i++)
+		for(int i = 0; i < processorList.length; i++)
 		{
-			processorList[i].reset();
+			Processor p = processorList[i];
+			p.reset();
 		}
 		
-		
-		//for each job in jobs
+		//determine processor for all jobs.
 		for(Job j : jobs)
 		{
 			determineProcessorCircular(j);
 		}
-		
-		//for each processor 
-		for(Processor p : processorList)
-		{
-			time_ms += p.jobQueueTime; //add processorQueue time to total time.
-		}	
-		
-		return time_ms; //return turnaround time.
 	}
 	
-	public int runJobsOther(Job[] jobs)
+	public static void runJobsOther(Job[] jobs)
 	{
 
 		//reset processors first
@@ -145,16 +167,12 @@ public class driver {
 		{
 			processorList[i].reset();
 		}
-		//reset total time 
-		time_ms = 0;
 		
 		//for each job in jobs
 		for(Job j : jobs)
 		{
 			determineProcessorOther(j);
 		}
-		
-		return time_ms; //return turn-around time
 	}
 	
 	
@@ -176,6 +194,68 @@ public class driver {
 		}
 		return jobList;
 	}
+	
+	
+	
+	
+	
+	
+	/*
+	 * A group of Math helper methods used for computing statistics
+	 */
+	
+	public static int getMax(int[] nums)
+	{
+		  int maxValue = nums[0];
+		  for(int i=1;i < nums.length; i++)
+		  {
+		    if(nums[i] > maxValue)
+		    {
+			  maxValue = nums[i];
+			}
+		  }
+		  return maxValue;
+	}
+	
+	public static int getMin(int[] nums)
+	{
+		  int minValue = nums[0];
+		  for(int i=1;i<nums.length;i++)
+		  {
+		    if(nums[i] < minValue)
+		    {
+			  minValue = nums[i];
+			}
+		  }
+		  return minValue;
+	}
+	
+	public static int getAverage(int[] nums)
+	{
+		int sum = 0;
+		for(int i = 0; i<nums.length; i++)
+		{
+			sum += nums[i];
+		}
+		return sum/nums.length;
+	}
+	
+	public static double getSTD(int[] nums)
+	{
+		double STD = 0.0;
+		int average = getAverage(nums);
+		int length = nums.length;
+		
+		for(int num: nums)
+		{
+			STD += Math.pow(num - average,  2);
+		}
+		return Math.sqrt(STD/length);
+		
+	}
+	
+	
+	
 	
 }
 
