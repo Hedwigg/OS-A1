@@ -5,12 +5,11 @@ public class driver {
 	
 	static Job[] testingJobs;
 	
-	static int last_processor_count = 0; //initially 0, first job goes on processor 0 for circular method.
-	
 	static int total_processors = 3; //3016%3 + 2 = 3 (per assignment instructions)
 	
 	static Processor[] processorList = new Processor[total_processors]; //array of processors 
 
+	static int pCount = 0; //current processor for circular method. initially 0
 	
 	
 	public static void main(String[] args)
@@ -79,16 +78,29 @@ public class driver {
 		System.out.println("Average:" + getAverage(turnAroundTimesOther)+"ms");
 		System.out.println("Standard Deviation:" + getSTD(turnAroundTimesOther)+"ms");
 		
-		System.out.println("***********************************************");
+		System.out.println("---------------------------------------------");
+		if(getAverage(turnAroundTimesOther) < getAverage(turnAroundTimesCircular))
+		{
+			System.out.println("Hurray, the other method beat the circular method overall for the random jobs!");
+		}
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		
 		
 		//_______________________________________________________________________________________
-		System.out.println("Test Job Sequences (from assignment instructions)");
+		
+		
+		
+		System.out.println("****Test Job Sequences (from assignment instructions)****");
 		currentJobList = testingJobs;
 		
 		runJobsCircular(currentJobList);
 		System.out.println("Turn around time CIRCULAR: " + determineTurnAroundTime() + "ms");
 		runJobsOther(currentJobList);
 		System.out.println("Turn around time OTHER: " + determineTurnAroundTime() + "ms");
+		
 	}
 	
 	/*
@@ -113,17 +125,18 @@ public class driver {
 	{
 		Processor p;
 		
-		if(last_processor_count == 2)
+		if(pCount >= processorList.length)	//reset counter if at end of processor list. (i.e circular
 		{
-			p = processorList[0];
-		}else
-		{
-			p = processorList[last_processor_count + 1]; //
+			pCount = 0;
+	
 		}
-		
+			p = processorList[pCount];
+
 		p.addJob(j);
 		//NOTE: it takes 1ms to put a job onto any processor
 		p.jobQueueTime += 1;
+		
+		pCount++;
 		
 	}
 	
@@ -133,12 +146,20 @@ public class driver {
 	 */
 	public static void determineProcessorOther(Job j)
 	{
-		//Processor p;
-		//logic statement
+		//logic statement to determine shortest queue
+		Processor lowest = processorList[0];
 		
-		
+		if(processorList[1].jobQueueTime < lowest.jobQueueTime)
+		{
+			lowest = processorList[1];
+		}else if (processorList[2].jobQueueTime < lowest.jobQueueTime)
+		{
+			lowest = processorList[2];
+		}
+
+		lowest.addJob(j);
 		//NOTE: it takes 1ms to put a job onto any processor
-		//p.jobQueueTime += 1;
+		lowest.jobQueueTime += 1;
 	}
 	
 	
@@ -151,11 +172,13 @@ public class driver {
 			Processor p = processorList[i];
 			p.reset();
 		}
-		
+		pCount = 0; //initially 0, first job goes on processor 0 for circular method.
+
 		//determine processor for all jobs.
 		for(Job j : jobs)
 		{
 			determineProcessorCircular(j);
+
 		}
 	}
 	
@@ -163,7 +186,7 @@ public class driver {
 	{
 
 		//reset processors first
-		for(int i = 0; i > total_processors; i++)
+		for(int i = 0; i < total_processors; i++)
 		{
 			processorList[i].reset();
 		}
