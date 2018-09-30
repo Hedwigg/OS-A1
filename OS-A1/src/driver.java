@@ -13,7 +13,6 @@ public class driver {
 
 	static int pCount = 0; //current processor for circular method. initially 0
 	
-	
 	public static void main(String[] args)
 	{
 				
@@ -54,10 +53,10 @@ public class driver {
 			currentJobList = generateRandomJobs();
 	
 			runJobsCircular(currentJobList);
-			turnAroundTimesCircular[i] = determineTurnAroundTime();
+			turnAroundTimesCircular[i] = determineTurnAroundTime(currentJobList);
 			
 			runJobsOther(currentJobList);
-			turnAroundTimesOther[i] = determineTurnAroundTime();
+			turnAroundTimesOther[i] = determineTurnAroundTime(currentJobList);
 			
 		}
 		
@@ -102,9 +101,9 @@ public class driver {
 			writer.println("****Test Job Sequences (array from assignment instructions)****");
 			currentJobList = testingJobs;
 			runJobsCircular(currentJobList);
-			writer.println("Turn around time CIRCULAR: " + determineTurnAroundTime() + "ms");
+			writer.println("Turn around time CIRCULAR: " + determineTurnAroundTime(currentJobList) + "ms");
 			runJobsOther(currentJobList);
-			writer.println("Turn around time OTHER (lowest queue) : " + determineTurnAroundTime() + "ms");
+			writer.println("Turn around time OTHER (lowest queue) : " + determineTurnAroundTime(currentJobList) + "ms");
 			if(getAverage(turnAroundTimesOther) < getAverage(turnAroundTimesCircular))
 			{
 				writer.println("Hurray, the other method beat the circular method overall for the preset array of  jobs!");
@@ -113,9 +112,7 @@ public class driver {
 
 		
 		}catch(FileNotFoundException e)	//if the file cannot be written to. just print to console (if grader is just running in eclipse/netbeans etc.
-		{
-			System.out.println(e);
-			
+		{			
 			System.out.println("****Randomly generated job sequences of 100****");
 			System.out.println("***********************************************");
 			//Display min, max, average and STD for each set of 100 turn around times.
@@ -142,18 +139,13 @@ public class driver {
 			System.out.println("");
 			System.out.println("");
 			System.out.println("");
-			
-			
 			//_______________________________________________________________________________________
-			
-			
-			
 			System.out.println("****Test Job Sequences (array from assignment instructions)****");
 			currentJobList = testingJobs;
 			runJobsCircular(currentJobList);
-			System.out.println("Turn around time CIRCULAR: " + determineTurnAroundTime() + "ms");
+			System.out.println("Turn around time CIRCULAR: " + determineTurnAroundTime(currentJobList) + "ms");
 			runJobsOther(currentJobList);
-			System.out.println("Turn around time OTHER (lowest queue) : " + determineTurnAroundTime() + "ms");
+			System.out.println("Turn around time OTHER (lowest queue) : " + determineTurnAroundTime(currentJobList) + "ms");
 			if(getAverage(turnAroundTimesOther) < getAverage(turnAroundTimesCircular))
 			{
 				System.out.println("Hurray, the other method beat the circular method overall for the preset array of  jobs!");
@@ -164,14 +156,20 @@ public class driver {
 	/*
 	 * method determines the longest jobQueueTime for all 3 processors. i.e the total processing time for the program (job sequence)
 	 */
-	public static int determineTurnAroundTime()
+	public static int determineTurnAroundTime(Job[] currentJobList)
 	{
+		//
 		int t;
 		int p1t = processorList[0].jobQueueTime;
 		int p2t = processorList[1].jobQueueTime;
 		int p3t = processorList[2].jobQueueTime;
 		t= Math.max(p1t, p2t);
 		t= Math.max(p2t, p3t);
+		
+		//turn around time = total processing time - the first job's arrival time.
+		int firstArrivalTime = currentJobList[0].arrival_time;
+		t = t - firstArrivalTime;
+		
 		return t;
 	}
 	

@@ -1,6 +1,6 @@
 public class Processor {	
 	
-	public int jobQueueTime;
+	public int jobQueueTime; //total processing time of all jobs assigned to the processor.
 	
 	public Processor()
 	{
