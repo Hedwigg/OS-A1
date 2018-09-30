@@ -1,4 +1,5 @@
 public class Processor {	
+	
 	public int jobQueueTime;
 	
 	public Processor()

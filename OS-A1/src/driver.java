@@ -1,3 +1,5 @@
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Random;
 
 public class driver {
@@ -59,48 +61,104 @@ public class driver {
 			
 		}
 		
+		//Write output to a file
 		
-		
-		System.out.println("****Randomly generated job sequences of 100****");
-		System.out.println("***********************************************");
-		//Display min, max, average and STD for each set of 100 turn around times.
-		System.out.println("Statistics for CIRCULAR method:");
-		System.out.println("Max:" + getMax(turnAroundTimesCircular)+"ms");
-		System.out.println("Min:" + getMin(turnAroundTimesCircular)+"ms");
-		System.out.println("Average:" + getAverage(turnAroundTimesCircular)+"ms");
-		System.out.println("Standard Deviation:" + getSTD(turnAroundTimesCircular)+"ms");
-
-		System.out.println("---------------------------------------------");
-		
-		System.out.println("Statistics for OTHER method:");
-		System.out.println("Max:" + getMax(turnAroundTimesOther)+"ms");
-		System.out.println("Min:" + getMin(turnAroundTimesOther)+"ms");
-		System.out.println("Average:" + getAverage(turnAroundTimesOther)+"ms");
-		System.out.println("Standard Deviation:" + getSTD(turnAroundTimesOther)+"ms");
-		
-		System.out.println("---------------------------------------------");
-		if(getAverage(turnAroundTimesOther) < getAverage(turnAroundTimesCircular))
+		try 
 		{
-			System.out.println("Hurray, the other method beat the circular method overall for the random jobs!");
+			PrintWriter writer  = new PrintWriter("C:\\temp\\Lechman-1.output.txt");
+			
+			writer.println("****Randomly generated job sequences of 100****");
+			writer.println("***********************************************");
+			//Display min, max, average and STD for each set of 100 turn around times.
+			writer.println("Statistics for CIRCULAR method:");
+			writer.println("Max:" + getMax(turnAroundTimesCircular)+"ms");
+			writer.println("Min:" + getMin(turnAroundTimesCircular)+"ms");
+			writer.println("Average:" + getAverage(turnAroundTimesCircular)+"ms");
+			writer.println("Standard Deviation:" + getSTD(turnAroundTimesCircular)+"ms");
+	
+			writer.println("---------------------------------------------");
+			
+			writer.println("Statistics for OTHER (lowest queue) method:");
+			writer.println("Max:" + getMax(turnAroundTimesOther)+"ms");
+			writer.println("Min:" + getMin(turnAroundTimesOther)+"ms");
+			writer.println("Average:" + getAverage(turnAroundTimesOther)+"ms");
+			writer.println("Standard Deviation:" + getSTD(turnAroundTimesOther)+"ms");
+			
+			writer.println("---------------------------------------------");
+			if(getAverage(turnAroundTimesOther) < getAverage(turnAroundTimesCircular))
+			{
+				writer.println("Hurray, the other method beat the circular method overall for the random jobs!");
+			}
+			writer.println("");
+			writer.println("");
+			writer.println("");
+			writer.println("");
+			
+			
+			//_______________________________________________________________________________________
+			
+			
+			
+			writer.println("****Test Job Sequences (array from assignment instructions)****");
+			currentJobList = testingJobs;
+			runJobsCircular(currentJobList);
+			writer.println("Turn around time CIRCULAR: " + determineTurnAroundTime() + "ms");
+			runJobsOther(currentJobList);
+			writer.println("Turn around time OTHER (lowest queue) : " + determineTurnAroundTime() + "ms");
+			if(getAverage(turnAroundTimesOther) < getAverage(turnAroundTimesCircular))
+			{
+				writer.println("Hurray, the other method beat the circular method overall for the preset array of  jobs!");
+			}
+			writer.close();//close file writer
+
+		
+		}catch(FileNotFoundException e)	//if the file cannot be written to. just print to console (if grader is just running in eclipse/netbeans etc.
+		{
+			System.out.println(e);
+			
+			System.out.println("****Randomly generated job sequences of 100****");
+			System.out.println("***********************************************");
+			//Display min, max, average and STD for each set of 100 turn around times.
+			System.out.println("Statistics for CIRCULAR method:");
+			System.out.println("Max:" + getMax(turnAroundTimesCircular)+"ms");
+			System.out.println("Min:" + getMin(turnAroundTimesCircular)+"ms");
+			System.out.println("Average:" + getAverage(turnAroundTimesCircular)+"ms");
+			System.out.println("Standard Deviation:" + getSTD(turnAroundTimesCircular)+"ms");
+	
+			System.out.println("---------------------------------------------");
+			
+			System.out.println("Statistics for OTHER (lowest queue) method:");
+			System.out.println("Max:" + getMax(turnAroundTimesOther)+"ms");
+			System.out.println("Min:" + getMin(turnAroundTimesOther)+"ms");
+			System.out.println("Average:" + getAverage(turnAroundTimesOther)+"ms");
+			System.out.println("Standard Deviation:" + getSTD(turnAroundTimesOther)+"ms");
+			
+			System.out.println("---------------------------------------------");
+			if(getAverage(turnAroundTimesOther) < getAverage(turnAroundTimesCircular))
+			{
+				System.out.println("Hurray, the other method beat the circular method overall for the random jobs!");
+			}
+			System.out.println("");
+			System.out.println("");
+			System.out.println("");
+			System.out.println("");
+			
+			
+			//_______________________________________________________________________________________
+			
+			
+			
+			System.out.println("****Test Job Sequences (array from assignment instructions)****");
+			currentJobList = testingJobs;
+			runJobsCircular(currentJobList);
+			System.out.println("Turn around time CIRCULAR: " + determineTurnAroundTime() + "ms");
+			runJobsOther(currentJobList);
+			System.out.println("Turn around time OTHER (lowest queue) : " + determineTurnAroundTime() + "ms");
+			if(getAverage(turnAroundTimesOther) < getAverage(turnAroundTimesCircular))
+			{
+				System.out.println("Hurray, the other method beat the circular method overall for the preset array of  jobs!");
+			}
 		}
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		
-		
-		//_______________________________________________________________________________________
-		
-		
-		
-		System.out.println("****Test Job Sequences (from assignment instructions)****");
-		currentJobList = testingJobs;
-		
-		runJobsCircular(currentJobList);
-		System.out.println("Turn around time CIRCULAR: " + determineTurnAroundTime() + "ms");
-		runJobsOther(currentJobList);
-		System.out.println("Turn around time OTHER: " + determineTurnAroundTime() + "ms");
-		
 	}
 	
 	/*
@@ -119,23 +177,23 @@ public class driver {
 	
 	
 	/*
-	 * method to determine processor and add job to it based on a circular fashion 
+	 * method to determine processor and add job to it based on a circular fashion ((last_processor + 1) %k i.e. just cycle through the processors)
 	 */
 	public static void determineProcessorCircular(Job j)
 	{
-		Processor p;
+		Processor p;	
 		
-		if(pCount >= processorList.length)	//reset counter if at end of processor list. (i.e circular
+		if(pCount >= processorList.length)	//reset counter if at end of processor list. (i.e circular)
 		{
 			pCount = 0;
 	
 		}
 			p = processorList[pCount];
-
+		
+		
 		p.addJob(j);
 		//NOTE: it takes 1ms to put a job onto any processor
 		p.jobQueueTime += 1;
-		
 		pCount++;
 		
 	}
@@ -163,7 +221,7 @@ public class driver {
 	}
 	
 	
-	//method to run an array of jobs in a circular fashion, returns turnaround time
+	//method to run an array of jobs in a circular fashion
 	public static void runJobsCircular(Job[] jobs)
 	{
 		//reset processors first
@@ -182,6 +240,8 @@ public class driver {
 		}
 	}
 	
+	
+	//method to run an array of jobs in the other fashion (add to shortest queue), 
 	public static void runJobsOther(Job[] jobs)
 	{
 
@@ -224,7 +284,7 @@ public class driver {
 	
 	
 	/*
-	 * A group of Math helper methods used for computing statistics
+	 * A group of Math helper methods used for computing statistics. They are pretty self-explanatory by their method names.
 	 */
 	
 	public static int getMax(int[] nums)
@@ -263,6 +323,8 @@ public class driver {
 		return sum/nums.length;
 	}
 	
+	
+	//STD = standard deviation
 	public static double getSTD(int[] nums)
 	{
 		double STD = 0.0;
