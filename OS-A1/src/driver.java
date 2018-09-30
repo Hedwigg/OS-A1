@@ -158,7 +158,6 @@ public class driver {
 	 */
 	public static int determineTurnAroundTime(Job[] currentJobList)
 	{
-		//
 		int t;
 		int p1t = processorList[0].jobQueueTime;
 		int p2t = processorList[1].jobQueueTime;
