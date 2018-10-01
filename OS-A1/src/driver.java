@@ -12,10 +12,6 @@
  * 
  */
 
-
-
-
-
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Random;
@@ -164,12 +160,8 @@ public class driver {
 		int p1t = processorList[0].jobQueueTime;
 		int p2t = processorList[1].jobQueueTime;
 		int p3t = processorList[2].jobQueueTime;
-		t= Math.max(p1t, p2t);
-		t= Math.max(p2t, p3t);
-		
-		//turn around time = total processing time + the first job's arrival time (all processing times + the time all processors spent waiting for the first one to arrive).
-		int firstArrivalTime = currentJobList[0].arrival_time;
-		t = t + firstArrivalTime;
+		t= Math.max(p1t, p2t); //find max of first 2 processors
+		t= Math.max(p2t, p3t); //find max of second 2 processors
 		
 		return t;
 	}
@@ -210,7 +202,6 @@ public class driver {
 		{
 			lowest = processorList[2];
 		}
-
 		lowest.addJob(j);
 		//NOTE: it takes 1ms to put a job onto any processor
 		lowest.jobQueueTime += 1;
@@ -327,11 +318,6 @@ public class driver {
 			STD += Math.pow(num - average,  2);
 		}
 		return Math.sqrt(STD/length);
-		
-	}
-	
-	
-	
-	
+	}	
 }
 
