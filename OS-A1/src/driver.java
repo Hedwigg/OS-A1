@@ -155,7 +155,6 @@ public class driver {
 	
 	
 	
-	
 	/*
 	 * method determines the longest jobQueueTime for all 3 processors then subtracts the arrival time for the first job. -  i.e the total processing time for the program (job sequence)
 	 */
