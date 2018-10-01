@@ -1,9 +1,26 @@
+/*
+ * @author Joel Lechman
+ * 
+ * Operating Systems Fall 2018 
+ * Programming Assignment # 1 
+ * 
+ * Assignment instructions found @ https://www.cs.montana.edu/bhz/classes/fall-2018/csci460/assign1.pdf
+ * 
+ * You can run this program without any arguments. To get a txt file output you need to have the directory C:\temp\ created on your computer. Otherwise the output is just printed to the console.
+ * 
+ * Please contact me @ joel1500@bresnan.net if I need to demonstrate running the program for my grade.
+ * 
+ */
+
+
+
+
+
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Random;
 
 public class driver {
-	
 	
 	static Job[] testingJobs;
 	
@@ -15,15 +32,11 @@ public class driver {
 	
 	public static void main(String[] args)
 	{
-				
-		
 		//Initialize processors
 		for(int i = 0; i < total_processors; i++)
 		{
 			processorList[i] = new Processor();
 		}
-		
-		
 		
 		//Initialize testing jobs (array of 12 from assignment)
 		testingJobs = new Job[12];
@@ -40,15 +53,15 @@ public class driver {
 		testingJobs[10] = new Job(88,73);
 		testingJobs[11] = new Job(95,8);	
 		
-		
+		//keep track of what jobs we are running (random or the group laid out in the assignment instructions).
 		Job[] currentJobList;
 		
-		//array of turn-around times for each sequence of 100
+		//array of turn-around times to store each sequence of 100 jobs
 		int[] turnAroundTimesCircular = new int[100];
 		int[] turnAroundTimesOther = new int[100];
 		
-		
-		for(int i = 0; i< 100; i++)	//run 100 sequences and record turn around times
+		//run 100 sequences of 100 generated jobs and record turn around times for each sequence
+		for(int i = 0; i< 100; i++)	
 		{
 			currentJobList = generateRandomJobs();
 	
@@ -60,12 +73,11 @@ public class driver {
 			
 		}
 		
-		//Write output to a file
-		
+		//Write output to a file (needs a folder 'temp' in c: drive of the computer to work)
 		try 
 		{
 			PrintWriter writer  = new PrintWriter("C:\\temp\\Lechman-1.output.txt");
-			
+	
 			writer.println("****Randomly generated job sequences of 100****");
 			writer.println("***********************************************");
 			//Display min, max, average and STD for each set of 100 turn around times.
@@ -74,15 +86,12 @@ public class driver {
 			writer.println("Min:" + getMin(turnAroundTimesCircular)+"ms");
 			writer.println("Average:" + getAverage(turnAroundTimesCircular)+"ms");
 			writer.println("Standard Deviation:" + getSTD(turnAroundTimesCircular)+"ms");
-	
 			writer.println("---------------------------------------------");
-			
 			writer.println("Statistics for OTHER (lowest queue) method:");
 			writer.println("Max:" + getMax(turnAroundTimesOther)+"ms");
 			writer.println("Min:" + getMin(turnAroundTimesOther)+"ms");
 			writer.println("Average:" + getAverage(turnAroundTimesOther)+"ms");
 			writer.println("Standard Deviation:" + getSTD(turnAroundTimesOther)+"ms");
-			
 			writer.println("---------------------------------------------");
 			if(getAverage(turnAroundTimesOther) < getAverage(turnAroundTimesCircular))
 			{
@@ -92,12 +101,6 @@ public class driver {
 			writer.println("");
 			writer.println("");
 			writer.println("");
-			
-			
-			//_______________________________________________________________________________________
-			
-			
-			
 			writer.println("****Test Job Sequences (array from assignment instructions)****");
 			currentJobList = testingJobs;
 			runJobsCircular(currentJobList);
@@ -109,9 +112,8 @@ public class driver {
 				writer.println("Hurray, the other method beat the circular method overall for the preset array of  jobs!");
 			}
 			writer.close();//close file writer
-
-		
-		}catch(FileNotFoundException e)	//if the file cannot be written to. just print to console (if grader is just running in eclipse/netbeans etc.
+			
+		}catch(FileNotFoundException e)	//if the file cannot be written to. Just print to console (if grader is just running in a IDE)
 		{			
 			System.out.println("****Randomly generated job sequences of 100****");
 			System.out.println("***********************************************");
@@ -121,15 +123,12 @@ public class driver {
 			System.out.println("Min:" + getMin(turnAroundTimesCircular)+"ms");
 			System.out.println("Average:" + getAverage(turnAroundTimesCircular)+"ms");
 			System.out.println("Standard Deviation:" + getSTD(turnAroundTimesCircular)+"ms");
-	
 			System.out.println("---------------------------------------------");
-			
 			System.out.println("Statistics for OTHER (lowest queue) method:");
 			System.out.println("Max:" + getMax(turnAroundTimesOther)+"ms");
 			System.out.println("Min:" + getMin(turnAroundTimesOther)+"ms");
 			System.out.println("Average:" + getAverage(turnAroundTimesOther)+"ms");
 			System.out.println("Standard Deviation:" + getSTD(turnAroundTimesOther)+"ms");
-			
 			System.out.println("---------------------------------------------");
 			if(getAverage(turnAroundTimesOther) < getAverage(turnAroundTimesCircular))
 			{
@@ -139,7 +138,6 @@ public class driver {
 			System.out.println("");
 			System.out.println("");
 			System.out.println("");
-			//_______________________________________________________________________________________
 			System.out.println("****Test Job Sequences (array from assignment instructions)****");
 			currentJobList = testingJobs;
 			runJobsCircular(currentJobList);
@@ -153,8 +151,13 @@ public class driver {
 		}
 	}
 	
+	
+	
+	
+	
+	
 	/*
-	 * method determines the longest jobQueueTime for all 3 processors. i.e the total processing time for the program (job sequence)
+	 * method determines the longest jobQueueTime for all 3 processors then subtracts the arrival time for the first job. -  i.e the total processing time for the program (job sequence)
 	 */
 	public static int determineTurnAroundTime(Job[] currentJobList)
 	{
@@ -165,9 +168,9 @@ public class driver {
 		t= Math.max(p1t, p2t);
 		t= Math.max(p2t, p3t);
 		
-		//turn around time = total processing time - the first job's arrival time.
+		//turn around time = total processing time + the first job's arrival time (all processing times + the time all processors spent waiting for the first one to arrive).
 		int firstArrivalTime = currentJobList[0].arrival_time;
-		t = t - firstArrivalTime;
+		t = t + firstArrivalTime;
 		
 		return t;
 	}
@@ -183,11 +186,8 @@ public class driver {
 		if(pCount >= processorList.length)	//reset counter if at end of processor list. (i.e circular)
 		{
 			pCount = 0;
-	
 		}
-			p = processorList[pCount];
-		
-		
+		p = processorList[pCount];
 		p.addJob(j);
 		//NOTE: it takes 1ms to put a job onto any processor
 		p.jobQueueTime += 1;
@@ -195,9 +195,8 @@ public class driver {
 		
 	}
 	
-	//TODO finish determineProcessorOther method and document fully. Consider combining the two runJobs methods into one to shorten code (just need an if statement & another input variable to say which determineProcessor method to pick)
 	/*
-	 * method to determine processor based on **************?
+	 * method to determine processor for OTHER method: pick the processor with the shortest total processing time queue and add it to that.
 	 */
 	public static void determineProcessorOther(Job j)
 	{
@@ -256,10 +255,10 @@ public class driver {
 	}
 	
 	
-	
-	/*produces randomly generated job sequences of 100 which arrive every 1ms, each job has
-	* a random processing time between 1ms and 500ms.
-	*/
+	/*
+	 * produces randomly generated job sequences of 100 which arrive every 1ms, each job has
+	 * a random processing time between 1ms and 500ms. Returns a list of 100 'randomly' generated jobs.
+	 */
 	public static Job[] generateRandomJobs()
 	{
 		Job[] jobList = new Job[100];
@@ -268,16 +267,12 @@ public class driver {
 		
 		for(int i = 0; i<100; i++)
 		{
-			r = rand.nextInt(500)+1;  //generate a random int between  1 and 500 inclusive
+			r = rand.nextInt(500)+1;  //generate a random int (between 1 and 500 inclusive) for processing time.
 			jobList[i] = new Job(i,r);
 
 		}
 		return jobList;
 	}
-	
-	
-	
-	
 	
 	
 	/*
@@ -319,7 +314,6 @@ public class driver {
 		}
 		return sum/nums.length;
 	}
-	
 	
 	//STD = standard deviation
 	public static double getSTD(int[] nums)
