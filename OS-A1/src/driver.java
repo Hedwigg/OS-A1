@@ -206,7 +206,8 @@ public class driver {
 		if(processorList[1].jobQueueTime < lowest.jobQueueTime)
 		{
 			lowest = processorList[1];
-		}else if (processorList[2].jobQueueTime < lowest.jobQueueTime)
+		}
+		if (processorList[2].jobQueueTime < lowest.jobQueueTime)
 		{
 			lowest = processorList[2];
 		}
