@@ -8,18 +8,4 @@ public class Job {
 		arrival_time = a;
 		processing_time = p;
 	}
-	
-	public int getArrival()
-	{
-		return arrival_time;
-	}
-	
-	
-	public int getProcessing()
-	{
-		return processing_time;
-	}
 }
-
-
-/*testing*/
